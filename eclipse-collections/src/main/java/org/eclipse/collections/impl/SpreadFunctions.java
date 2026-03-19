@@ -10,30 +10,46 @@
 
 package org.eclipse.collections.impl;
 
+/**
+ * Utility methods that apply hash spreading functions to primitive values. The resulting values
+ * have better bit distribution and help reduce collisions in hash table implementations.
+ *
+ * @see https://en.wikipedia.org/wiki/Consistent_hashing
+ */
 public final class SpreadFunctions
 {
+    private static final int SPREAD_32_MIX_CONSTANT_1 = 0xACAB2A4D;
+    private static final int SPREAD_32_MIX_CONSTANT_2 = 0x5CC7DF53;
+    private static final int SPREAD_32_ALT_CONSTANT_1 = 0xBA1CCD33;
+    private static final int SPREAD_32_ALT_CONSTANT_2 = 0x9B6296CB;
+
+    private static final long SPREAD_64_MIX_CONSTANT_1 = -4254747342703917655L;
+    private static final long SPREAD_64_MIX_CONSTANT_2 = -908430792394475837L;
+    private static final long SPREAD_64_ALT_CONSTANT_1 = -6261870919139520145L;
+    private static final long SPREAD_64_ALT_CONSTANT_2 = 2747051607443084853L;
+
     private SpreadFunctions()
     {
     }
 
     private static int thirtyTwoBitSpread1(int code)
     {
-        int code1 = code;
-        code1 ^= code1 >>> 15;
-        code1 *= 0xACAB2A4D;
-        code1 ^= code1 >>> 15;
-        code1 *= 0x5CC7DF53;
-        code1 ^= code1 >>> 12;
-        return code1;
+        int hashedResult = code;
+        hashedResult ^= hashedResult >>> 15;
+        hashedResult *= SPREAD_32_MIX_CONSTANT_1;
+        hashedResult ^= hashedResult >>> 15;
+        hashedResult *= SPREAD_32_MIX_CONSTANT_2;
+        hashedResult ^= hashedResult >>> 12;
+        return hashedResult;
     }
 
     private static int thirtyTwoBitSpread2(int code)
     {
         int code1 = code;
         code1 ^= code1 >>> 14;
-        code1 *= 0xBA1CCD33;
+        code1 *= SPREAD_32_ALT_CONSTANT_1;
         code1 ^= code1 >>> 13;
-        code1 *= 0x9B6296CB;
+        code1 *= SPREAD_32_ALT_CONSTANT_2;
         code1 ^= code1 >>> 12;
         return code1;
     }
@@ -42,9 +58,9 @@ public final class SpreadFunctions
     {
         long code1 = code;
         code1 ^= code1 >>> 28;
-        code1 *= -4254747342703917655L;
+        code1 *= SPREAD_64_MIX_CONSTANT_1;
         code1 ^= code1 >>> 43;
-        code1 *= -908430792394475837L;
+        code1 *= SPREAD_64_MIX_CONSTANT_2;
         code1 ^= code1 >>> 23;
         return code1;
     }
@@ -53,9 +69,9 @@ public final class SpreadFunctions
     {
         long code1 = code;
         code1 ^= code1 >>> 23;
-        code1 *= -6261870919139520145L;
+        code1 *= SPREAD_64_ALT_CONSTANT_1;
         code1 ^= code1 >>> 39;
-        code1 *= 2747051607443084853L;
+        code1 *= SPREAD_64_ALT_CONSTANT_2;
         code1 ^= code1 >>> 37;
         return code1;
     }

@@ -54,6 +54,8 @@ final class ImmutableBooleanArrayList
         implements ImmutableBooleanList, Serializable
 {
     private static final long serialVersionUID = 1L;
+    private static final int HASHtRUE = 1231;
+    private static final int HASHfALSE = 1237;
     private final int size;
     private final BitSet items;
 
@@ -514,7 +516,7 @@ final class ImmutableBooleanArrayList
         for (int i = 0; i < this.size; i++)
         {
             boolean item = this.items.get(i);
-            hashCode = 31 * hashCode + (item ? 1231 : 1237);
+            hashCode = 31 * hashCode + (item ? HASHtRUE : HASHfALSE);
         }
         return hashCode;
     }

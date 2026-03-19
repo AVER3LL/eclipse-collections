@@ -135,6 +135,7 @@ public class FastList<T>
     private static final Object[] DEFAULT_SIZED_EMPTY_ARRAY = {};
     private static final Object[] ZERO_SIZED_ARRAY = {};
     private static final int MAXIMUM_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+    private static final int DEFAULT_CAPACITY = 10;
 
     protected int size;
     protected transient T[] items = (T[]) DEFAULT_SIZED_EMPTY_ARRAY;
@@ -457,7 +458,7 @@ public class FastList<T>
     {
         if (this.items == DEFAULT_SIZED_EMPTY_ARRAY)
         {
-            this.items = (T[]) new Object[10];
+            this.items = (T[]) new Object[DEFAULT_CAPACITY];
         }
         else
         {
