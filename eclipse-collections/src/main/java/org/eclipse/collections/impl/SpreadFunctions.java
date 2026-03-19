@@ -45,35 +45,35 @@ public final class SpreadFunctions
 
     private static int thirtyTwoBitSpread2(int code)
     {
-        int code1 = code;
-        code1 ^= code1 >>> 14;
-        code1 *= SPREAD_32_ALT_CONSTANT_1;
-        code1 ^= code1 >>> 13;
-        code1 *= SPREAD_32_ALT_CONSTANT_2;
-        code1 ^= code1 >>> 12;
-        return code1;
+        int hashedResult = code;
+        hashedResult ^= hashedResult >>> 14;
+        hashedResult *= SPREAD_32_ALT_CONSTANT_1;
+        hashedResult ^= hashedResult >>> 13;
+        hashedResult *= SPREAD_32_ALT_CONSTANT_2;
+        hashedResult ^= hashedResult >>> 12;
+        return hashedResult;
     }
 
     private static long sixtyFourBitSpread1(long code)
     {
-        long code1 = code;
-        code1 ^= code1 >>> 28;
-        code1 *= SPREAD_64_MIX_CONSTANT_1;
-        code1 ^= code1 >>> 43;
-        code1 *= SPREAD_64_MIX_CONSTANT_2;
-        code1 ^= code1 >>> 23;
-        return code1;
+        long hashedResult = code;
+        hashedResult ^= hashedResult >>> 28;
+        hashedResult *= SPREAD_64_MIX_CONSTANT_1;
+        hashedResult ^= hashedResult >>> 43;
+        hashedResult *= SPREAD_64_MIX_CONSTANT_2;
+        hashedResult ^= hashedResult >>> 23;
+        return hashedResult;
     }
 
     private static long sixtyFourBitSpread2(long code)
     {
-        long code1 = code;
-        code1 ^= code1 >>> 23;
-        code1 *= SPREAD_64_ALT_CONSTANT_1;
-        code1 ^= code1 >>> 39;
-        code1 *= SPREAD_64_ALT_CONSTANT_2;
-        code1 ^= code1 >>> 37;
-        return code1;
+        long hashedResult = code;
+        hashedResult ^= hashedResult >>> 23;
+        hashedResult *= SPREAD_64_ALT_CONSTANT_1;
+        hashedResult ^= hashedResult >>> 39;
+        hashedResult *= SPREAD_64_ALT_CONSTANT_2;
+        hashedResult ^= hashedResult >>> 37;
+        return hashedResult;
     }
 
     public static long doubleSpreadOne(double element)
