@@ -105,6 +105,7 @@ import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 import org.eclipse.collections.impl.multimap.list.FastListMultimap;
 import org.eclipse.collections.impl.parallel.BatchIterable;
 import org.eclipse.collections.impl.partition.list.PartitionFastList;
+import org.eclipse.collections.impl.tuple.Tuples;
 import org.eclipse.collections.impl.utility.ArrayIterate;
 import org.eclipse.collections.impl.utility.ArrayListIterate;
 import org.eclipse.collections.impl.utility.Iterate;
@@ -699,7 +700,8 @@ public class FastList<T>
             Predicate2<? super T, ? super P> predicate,
             P parameter)
     {
-        return InternalArrayIterate.selectAndRejectWith(this.items, this.size, predicate, parameter);
+        PartitionFastList<T> curr = InternalArrayIterate.partitionWith(this.items, this.size, predicate, parameter);
+        return Tuples.twin(curr.getSelected(), curr.getRejected());
     }
 
     @Override

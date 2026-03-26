@@ -14,7 +14,7 @@ package org.eclipse.collections.impl;
  * Utility methods that apply hash spreading functions to primitive values. The resulting values
  * have better bit distribution and help reduce collisions in hash table implementations.
  *
- * @see https://en.wikipedia.org/wiki/Consistent_hashing
+ * see https://en.wikipedia.org/wiki/Consistent_hashing
  */
 public final class SpreadFunctions
 {
