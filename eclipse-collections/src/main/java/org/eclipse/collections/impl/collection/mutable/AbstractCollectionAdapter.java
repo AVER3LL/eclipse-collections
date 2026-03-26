@@ -578,6 +578,18 @@ public abstract class AbstractCollectionAdapter<T>
         return this.getDelegate().add(o);
     }
 
+    public boolean addAll(T... elements)
+    {
+        for (T element : elements) {
+            boolean result = this.add(element);
+            if (!result) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     @Override
     public boolean remove(Object o)
     {
