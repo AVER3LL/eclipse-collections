@@ -327,42 +327,37 @@ public final class ConcurrentHashMap<K, V>
         {
             int start = resizeContainer.subtractAndGetQueuePosition();
             int end = start + ResizeContainer.QUEUE_INCREMENT;
-            if (end > 0)
-            {
-                if (start < 0)
-                {
-                    start = 0;
+            if (end <= 0) {
+                return;
+            }
+
+            start = Math.max(0, start);
+
+            for (int j = end - 1; j >= start; ) {
+                Object o = src.get(j);
+
+                if (o == null && src.compareAndSet(j, null, RESIZED) ) {
+                    j--;
+                    continue;
                 }
-                for (int j = end - 1; j >= start; )
-                {
-                    Object o = src.get(j);
-                    if (o == null)
-                    {
-                        if (src.compareAndSet(j, null, RESIZED))
-                        {
-                            j--;
-                        }
-                    }
-                    else if (o == RESIZED || o == RESIZING)
-                    {
-                        resizeContainer.zeroOutQueuePosition();
-                        return;
-                    }
-                    else
-                    {
-                        Entry<K, V> e = (Entry<K, V>) o;
-                        if (src.compareAndSet(j, o, RESIZING))
-                        {
-                            while (e != null)
-                            {
-                                this.unconditionalCopy(dest, e);
-                                e = e.getNext();
-                            }
-                            src.set(j, RESIZED);
-                            j--;
-                        }
-                    }
+
+                if (o == RESIZED || o == RESIZING) {
+                    resizeContainer.zeroOutQueuePosition();
+                    return;
                 }
+
+                Entry<K, V> e = (Entry<K, V>) o;
+                if (src.compareAndSet(j, o, RESIZING))
+                {
+                    while (e != null)
+                    {
+                        this.unconditionalCopy(dest, e);
+                        e = e.getNext();
+                    }
+                    src.set(j, RESIZED);
+                    j--;
+                }
+
             }
         }
     }
@@ -379,29 +374,21 @@ public final class ConcurrentHashMap<K, V>
             if (o == RESIZED || o == RESIZING)
             {
                 currentArray = ((ResizeContainer) currentArray.get(length - 1)).nextArray;
+                continue;
             }
-            else
-            {
-                Entry<K, V> newEntry;
-                if (o == null)
-                {
-                    if (toCopyEntry.getNext() == null)
-                    {
-                        newEntry = toCopyEntry; // no need to duplicate
-                    }
-                    else
-                    {
-                        newEntry = new Entry<>(toCopyEntry.getKey(), toCopyEntry.getValue());
-                    }
-                }
-                else
-                {
-                    newEntry = new Entry<>(toCopyEntry.getKey(), toCopyEntry.getValue(), (Entry<K, V>) o);
-                }
-                if (currentArray.compareAndSet(index, o, newEntry))
-                {
-                    return;
-                }
+
+            Entry<K, V> newEntry;
+            if (o == null) {
+                newEntry =
+                        toCopyEntry.getNext() == null
+                                ? toCopyEntry
+                                : new Entry<>(toCopyEntry.getKey(), toCopyEntry.getValue());
+            } else {
+                newEntry =
+                        new Entry<>(toCopyEntry.getKey(), toCopyEntry.getValue(), (Entry<K, V>) o);
+            }
+            if (currentArray.compareAndSet(index, o, newEntry)) {
+                return;
             }
         }
     }
