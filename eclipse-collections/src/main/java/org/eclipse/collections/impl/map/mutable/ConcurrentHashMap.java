@@ -547,40 +547,34 @@ public final class ConcurrentHashMap<K, V>
             if (o == RESIZED || o == RESIZING)
             {
                 currentArray = this.helpWithResizeWhileCurrentIndex(currentArray, index);
+                continue;
             }
-            else
-            {
-                Entry<K, V> e = (Entry<K, V>) o;
-                while (e != null)
-                {
-                    Object candidate = e.getKey();
-                    if (candidate.equals(key) && this.nullSafeEquals(e.getValue(), value))
-                    {
-                        Entry<K, V> replacement = this.createReplacementChainForRemoval((Entry<K, V>) o, e);
-                        if (currentArray.compareAndSet(index, o, replacement))
-                        {
-                            this.addToSize(-1);
-                            return true;
-                        }
-                        //noinspection ContinueStatementWithLabel
-                        continue outer;
+            Entry<K, V> e = (Entry<K, V>) o;
+            while (e != null) {
+                Object candidate = e.getKey();
+                if (candidate.equals(key) && this.nullSafeEquals(e.getValue(), value)) {
+                    Entry<K, V> replacement =
+                            this.createReplacementChainForRemoval((Entry<K, V>) o, e);
+                    if (currentArray.compareAndSet(index, o, replacement)) {
+                        this.addToSize(-1);
+                        return true;
                     }
-                    e = e.getNext();
+                    //noinspection ContinueStatementWithLabel
+                    continue outer;
                 }
-                return false;
+                e = e.getNext();
             }
+            return false;
         }
     }
 
     private void addToSize(int value)
     {
-        if (this.partitionedSize != null)
+        if (this.partitionedSize != null && this.incrementPartitionedSize(value))
         {
-            if (this.incrementPartitionedSize(value))
-            {
-                return;
-            }
+            return;
         }
+
         this.incrementLocalSize(value);
     }
 
@@ -722,21 +716,18 @@ public final class ConcurrentHashMap<K, V>
             if (o == RESIZED || o == RESIZING)
             {
                 currentArray = this.helpWithResizeWhileCurrentIndex(currentArray, index);
+                continue;
             }
-            else
-            {
-                Entry<K, V> e = (Entry<K, V>) o;
-                while (e != null)
-                {
-                    Object candidate = e.getKey();
-                    if (candidate.equals(key))
-                    {
-                        return e.getValue();
-                    }
-                    e = e.getNext();
+
+            Entry<K, V> e = (Entry<K, V>) o;
+            while (e != null) {
+                Object candidate = e.getKey();
+                if (candidate.equals(key)) {
+                    return e.getValue();
                 }
-                return null;
+                e = e.getNext();
             }
+            return null;
         }
     }
 
@@ -752,21 +743,18 @@ public final class ConcurrentHashMap<K, V>
             if (o == RESIZED || o == RESIZING)
             {
                 currentArray = this.helpWithResizeWhileCurrentIndex(currentArray, index);
+                continue;
             }
-            else
-            {
-                Entry<K, V> e = (Entry<K, V>) o;
-                while (e != null)
-                {
-                    Object candidate = e.getKey();
-                    if (candidate.equals(key))
-                    {
-                        return e;
-                    }
-                    e = e.getNext();
+
+            Entry<K, V> e = (Entry<K, V>) o;
+            while (e != null) {
+                Object candidate = e.getKey();
+                if (candidate.equals(key)) {
+                    return e;
                 }
-                return null;
+                e = e.getNext();
             }
+            return null;
         }
     }
 
@@ -803,32 +791,31 @@ public final class ConcurrentHashMap<K, V>
             if (o == RESIZED || o == RESIZING)
             {
                 currentArray = this.helpWithResizeWhileCurrentIndex(currentArray, index);
+                continue;
             }
-            else
-            {
-                Entry<K, V> e = (Entry<K, V>) o;
-                while (e != null)
-                {
-                    Object candidate = e.getKey();
-                    if (candidate.equals(key))
-                    {
-                        V oldValue = e.getValue();
-                        Entry<K, V> newEntry = new Entry<>(e.getKey(), value, this.createReplacementChainForRemoval((Entry<K, V>) o, e));
-                        if (!currentArray.compareAndSet(index, o, newEntry))
-                        {
-                            //noinspection ContinueStatementWithLabel
-                            continue outer;
-                        }
-                        return oldValue;
+
+            Entry<K, V> e = (Entry<K, V>) o;
+            while (e != null) {
+                Object candidate = e.getKey();
+                if (candidate.equals(key)) {
+                    V oldValue = e.getValue();
+                    Entry<K, V> newEntry =
+                            new Entry<>(
+                                    e.getKey(),
+                                    value,
+                                    this.createReplacementChainForRemoval((Entry<K, V>) o, e));
+                    if (!currentArray.compareAndSet(index, o, newEntry)) {
+                        //noinspection ContinueStatementWithLabel
+                        continue outer;
                     }
-                    e = e.getNext();
+                    return oldValue;
                 }
-                Entry<K, V> newEntry = new Entry<>(key, value, (Entry<K, V>) o);
-                if (currentArray.compareAndSet(index, o, newEntry))
-                {
-                    this.incrementSizeAndPossiblyResize(currentArray, length, o);
-                    return null;
-                }
+                e = e.getNext();
+            }
+            Entry<K, V> newEntry = new Entry<>(key, value, (Entry<K, V>) o);
+            if (currentArray.compareAndSet(index, o, newEntry)) {
+                this.incrementSizeAndPossiblyResize(currentArray, length, o);
+                return null;
             }
         }
     }
@@ -1068,28 +1055,27 @@ public final class ConcurrentHashMap<K, V>
             if (o == RESIZED || o == RESIZING)
             {
                 currentArray = this.helpWithResizeWhileCurrentIndex(currentArray, index);
+                continue;
             }
-            else
+
+            Entry<K, V> e = (Entry<K, V>) o;
+            while (e != null)
             {
-                Entry<K, V> e = (Entry<K, V>) o;
-                while (e != null)
+                Object candidate = e.getKey();
+                if (candidate.equals(key))
                 {
-                    Object candidate = e.getKey();
-                    if (candidate.equals(key))
+                    V oldValue = e.getValue();
+                    Entry<K, V> newEntry = new Entry<>(e.getKey(), value, this.createReplacementChainForRemoval((Entry<K, V>) o, e));
+                    if (!currentArray.compareAndSet(index, o, newEntry))
                     {
-                        V oldValue = e.getValue();
-                        Entry<K, V> newEntry = new Entry<>(e.getKey(), value, this.createReplacementChainForRemoval((Entry<K, V>) o, e));
-                        if (!currentArray.compareAndSet(index, o, newEntry))
-                        {
-                            //noinspection ContinueStatementWithLabel
-                            continue outer;
-                        }
-                        return oldValue;
+                        //noinspection ContinueStatementWithLabel
+                        continue outer;
                     }
-                    e = e.getNext();
+                    return oldValue;
                 }
-                return null;
+                e = e.getNext();
             }
+            return null;
         }
     }
 
@@ -1136,28 +1122,25 @@ public final class ConcurrentHashMap<K, V>
             if (o == RESIZED || o == RESIZING)
             {
                 currentArray = this.helpWithResizeWhileCurrentIndex(currentArray, index);
+                continue;
             }
-            else
-            {
-                Entry<K, V> e = (Entry<K, V>) o;
-                while (e != null)
-                {
-                    Object candidate = e.getKey();
-                    if (candidate.equals(key))
-                    {
-                        Entry<K, V> replacement = this.createReplacementChainForRemoval((Entry<K, V>) o, e);
-                        if (currentArray.compareAndSet(index, o, replacement))
-                        {
-                            this.addToSize(-1);
-                            return e.getValue();
-                        }
-                        //noinspection ContinueStatementWithLabel
-                        continue outer;
+
+            Entry<K, V> e = (Entry<K, V>) o;
+            while (e != null) {
+                Object candidate = e.getKey();
+                if (candidate.equals(key)) {
+                    Entry<K, V> replacement =
+                            this.createReplacementChainForRemoval((Entry<K, V>) o, e);
+                    if (currentArray.compareAndSet(index, o, replacement)) {
+                        this.addToSize(-1);
+                        return e.getValue();
                     }
-                    e = e.getNext();
+                    //noinspection ContinueStatementWithLabel
+                    continue outer;
                 }
-                return null;
+                e = e.getNext();
             }
+            return null;
         }
     }
 
@@ -1184,37 +1167,32 @@ public final class ConcurrentHashMap<K, V>
     {
         AtomicReferenceArray currentArray = this.table;
         int chunks = blocks.size();
-        if (chunks > 1)
-        {
-            FutureTask<?>[] futures = new FutureTask<?>[chunks];
-            int chunkSize = currentArray.length() / chunks;
-            if (currentArray.length() % chunks != 0)
-            {
-                chunkSize++;
-            }
-            for (int i = 0; i < chunks; i++)
-            {
-                int start = i * chunkSize;
-                int end = Math.min((i + 1) * chunkSize, currentArray.length());
-                Procedure2<K, V> block = blocks.get(i);
-                futures[i] = new FutureTask(() -> this.sequentialForEachKeyValue(block, currentArray, start, end), null);
-                executor.execute(futures[i]);
-            }
-            for (int i = 0; i < chunks; i++)
-            {
-                try
-                {
-                    futures[i].get();
-                }
-                catch (Exception e)
-                {
-                    throw new RuntimeException("parallelForEachKeyValue failed", e);
-                }
-            }
-        }
-        else
-        {
+        if (chunks <= 1) {
             this.sequentialForEachKeyValue(blocks.get(0), currentArray, 0, currentArray.length());
+            return;
+        }
+
+        FutureTask<?>[] futures = new FutureTask<?>[chunks];
+        int chunkSize = currentArray.length() / chunks;
+        if (currentArray.length() % chunks != 0) {
+            chunkSize++;
+        }
+        for (int i = 0; i < chunks; i++) {
+            int start = i * chunkSize;
+            int end = Math.min((i + 1) * chunkSize, currentArray.length());
+            Procedure2<K, V> block = blocks.get(i);
+            futures[i] =
+                    new FutureTask(
+                            () -> this.sequentialForEachKeyValue(block, currentArray, start, end),
+                            null);
+            executor.execute(futures[i]);
+        }
+        for (int i = 0; i < chunks; i++) {
+            try {
+                futures[i].get();
+            } catch (Exception e) {
+                throw new RuntimeException("parallelForEachKeyValue failed", e);
+            }
         }
     }
 
