@@ -50,146 +50,6 @@ public class BooleanHashSet implements MutableBooleanSet, Externalizable
     // state = 3 ==> [T, F]
     private int state;
 
-    private static class EmptyBooleanIterator implements MutableBooleanIterator
-    {
-        @Override
-        public boolean next()
-        {
-            throw new NoSuchElementException();
-        }
-
-        @Override
-        public boolean hasNext()
-        {
-            return false;
-        }
-
-        @Override
-        public void remove()
-        {
-            throw new IllegalStateException();
-        }
-    }
-
-    private class FalseBooleanIterator implements MutableBooleanIterator
-    {
-        private int currentIndex;
-
-        @Override
-        public boolean hasNext()
-        {
-            return this.currentIndex == 0;
-        }
-
-        @Override
-        public boolean next()
-        {
-            if (this.currentIndex == 0)
-            {
-                this.currentIndex++;
-                return false;
-            }
-            this.currentIndex = -1;
-            throw new NoSuchElementException();
-        }
-
-        @Override
-        public void remove()
-        {
-            if (this.currentIndex == 0 || this.currentIndex == -1)
-            {
-                throw new IllegalStateException();
-            }
-            this.currentIndex = -1;
-            BooleanHashSet.this.remove(false);
-        }
-    }
-
-    private class TrueBooleanIterator implements MutableBooleanIterator
-    {
-        private int currentIndex;
-
-        @Override
-        public boolean hasNext()
-        {
-            return this.currentIndex == 0;
-        }
-
-        @Override
-        public boolean next()
-        {
-            if (this.currentIndex == 0)
-            {
-                this.currentIndex++;
-                return true;
-            }
-            this.currentIndex = -1;
-            throw new NoSuchElementException();
-        }
-
-        @Override
-        public void remove()
-        {
-            if (this.currentIndex == 0 || this.currentIndex == -1)
-            {
-                throw new IllegalStateException();
-            }
-            this.currentIndex = -1;
-            BooleanHashSet.this.remove(true);
-        }
-    }
-
-    private class FalseTrueBooleanIterator implements MutableBooleanIterator
-    {
-        private int currentIndex;
-
-        @Override
-        public boolean hasNext()
-        {
-            return this.currentIndex < 2;
-        }
-
-        @Override
-        public boolean next()
-        {
-            switch (this.currentIndex)
-            {
-                case 0:
-                    this.currentIndex++;
-                    return false;
-                case 1:
-                    this.currentIndex++;
-                    return true;
-                default:
-                    throw new NoSuchElementException();
-            }
-        }
-
-        @Override
-        public void remove()
-        {
-            switch (this.currentIndex)
-            {
-                case 0:
-                    throw new IllegalStateException();
-                case 1:
-                    if (!BooleanHashSet.this.remove(false))
-                    {
-                        throw new IllegalStateException();
-                    }
-                    return;
-                case 2:
-                    if (!BooleanHashSet.this.remove(true))
-                    {
-                        throw new IllegalStateException();
-                    }
-                    return;
-                default:
-                    throw new AssertionError();
-            }
-        }
-    }
-
     public BooleanHashSet()
     {
     }
@@ -353,13 +213,13 @@ public class BooleanHashSet implements MutableBooleanSet, Externalizable
         switch (this.state)
         {
             case 0:
-                return new EmptyBooleanIterator();
+                return new EmptyBooleanIterator(this);
             case 1:
-                return new FalseBooleanIterator();
+                return new FalseBooleanIterator(this);
             case 2:
-                return new TrueBooleanIterator();
+                return new TrueBooleanIterator(this);
             case 3:
-                return new FalseTrueBooleanIterator();
+                return new FalseTrueBooleanIterator(this);
             default:
                 throw new AssertionError("Invalid state");
         }
