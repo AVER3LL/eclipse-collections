@@ -19,16 +19,12 @@ jobs:
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2
-      - name: 'Download JDK'
-        uses: sormuras/download-jdk@v1
-        id: download-jdk
-        with:
-          feature: ${{ matrix.java-version }}
       - name: 'Set up JDK'
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: ${{ steps.download-jdk.outputs.version }}
-          jdkFile: "${{ steps.download-jdk.outputs.file }}"
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+          allow-early-access: true
       - name: Set Maven Wrapper
         run: mvn -N io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
       - name: 'JDK Version'

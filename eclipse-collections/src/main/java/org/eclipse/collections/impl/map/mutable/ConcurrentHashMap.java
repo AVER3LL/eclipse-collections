@@ -144,25 +144,24 @@ public final class ConcurrentHashMap<K, V>
             if (o == RESIZED || o == RESIZING)
             {
                 currentArray = this.helpWithResizeWhileCurrentIndex(currentArray, index);
+                continue;
             }
-            else
+
+            Entry<K, V> e = (Entry<K, V>) o;
+            while (e != null)
             {
-                Entry<K, V> e = (Entry<K, V>) o;
-                while (e != null)
+                K candidate = e.getKey();
+                if (candidate.equals(key))
                 {
-                    K candidate = e.getKey();
-                    if (candidate.equals(key))
-                    {
-                        return e.getValue();
-                    }
-                    e = e.getNext();
+                    return e.getValue();
                 }
-                Entry<K, V> newEntry = new Entry<>(key, value, (Entry<K, V>) o);
-                if (currentArray.compareAndSet(index, o, newEntry))
-                {
-                    this.incrementSizeAndPossiblyResize(currentArray, length, o);
-                    return null; // per the contract of putIfAbsent, we return null when the map didn't have this key before
-                }
+                e = e.getNext();
+            }
+            Entry<K, V> newEntry = new Entry<>(key, value, (Entry<K, V>) o);
+            if (currentArray.compareAndSet(index, o, newEntry))
+            {
+                this.incrementSizeAndPossiblyResize(currentArray, length, o);
+                return null; // per the contract of putIfAbsent, we return null when the map didn't have this key before
             }
         }
     }
@@ -413,30 +412,29 @@ public final class ConcurrentHashMap<K, V>
             if (o == RESIZED || o == RESIZING)
             {
                 currentArray = this.helpWithResizeWhileCurrentIndex(currentArray, index);
+                continue;
             }
-            else
+
+            Entry<K, V> e = (Entry<K, V>) o;
+            while (e != null)
             {
-                Entry<K, V> e = (Entry<K, V>) o;
-                while (e != null)
+                Object candidate = e.getKey();
+                if (candidate.equals(key))
                 {
-                    Object candidate = e.getKey();
-                    if (candidate.equals(key))
-                    {
-                        return e.getValue();
-                    }
-                    e = e.getNext();
+                    return e.getValue();
                 }
-                if (!createdValue)
-                {
-                    createdValue = true;
-                    newValue = factory.value();
-                }
-                Entry<K, V> newEntry = new Entry<>(key, newValue, (Entry<K, V>) o);
-                if (currentArray.compareAndSet(index, o, newEntry))
-                {
-                    this.incrementSizeAndPossiblyResize(currentArray, length, o);
-                    return newValue;
-                }
+                e = e.getNext();
+            }
+            if (!createdValue)
+            {
+                createdValue = true;
+                newValue = factory.value();
+            }
+            Entry<K, V> newEntry = new Entry<>(key, newValue, (Entry<K, V>) o);
+            if (currentArray.compareAndSet(index, o, newEntry))
+            {
+                this.incrementSizeAndPossiblyResize(currentArray, length, o);
+                return newValue;
             }
         }
     }
@@ -454,25 +452,23 @@ public final class ConcurrentHashMap<K, V>
             if (o == RESIZED || o == RESIZING)
             {
                 currentArray = this.helpWithResizeWhileCurrentIndex(currentArray, index);
+                continue;
             }
-            else
+            Entry<K, V> e = (Entry<K, V>) o;
+            while (e != null)
             {
-                Entry<K, V> e = (Entry<K, V>) o;
-                while (e != null)
+                Object candidate = e.getKey();
+                if (candidate.equals(key))
                 {
-                    Object candidate = e.getKey();
-                    if (candidate.equals(key))
-                    {
-                        return e.getValue();
-                    }
-                    e = e.getNext();
+                    return e.getValue();
                 }
-                Entry<K, V> newEntry = new Entry<>(key, value, (Entry<K, V>) o);
-                if (currentArray.compareAndSet(index, o, newEntry))
-                {
-                    this.incrementSizeAndPossiblyResize(currentArray, length, o);
-                    return value;
-                }
+                e = e.getNext();
+            }
+            Entry<K, V> newEntry = new Entry<>(key, value, (Entry<K, V>) o);
+            if (currentArray.compareAndSet(index, o, newEntry))
+            {
+                this.incrementSizeAndPossiblyResize(currentArray, length, o);
+                return value;
             }
         }
     }
@@ -499,35 +495,33 @@ public final class ConcurrentHashMap<K, V>
             if (o == RESIZED || o == RESIZING)
             {
                 currentArray = this.helpWithResizeWhileCurrentIndex(currentArray, index);
+                continue;
             }
-            else
+            Entry<K, V> e = (Entry<K, V>) o;
+            while (e != null)
             {
-                Entry<K, V> e = (Entry<K, V>) o;
-                while (e != null)
+                Object candidate = e.getKey();
+                if (candidate.equals(key))
                 {
-                    Object candidate = e.getKey();
-                    if (candidate.equals(key))
-                    {
-                        return e.getValue();
-                    }
-                    e = e.getNext();
+                    return e.getValue();
                 }
-                if (!createdValue)
+                e = e.getNext();
+            }
+            if (!createdValue)
+            {
+                createdValue = true;
+                newValue = factory.value(param1, param2, key);
+                if (newValue == null)
                 {
-                    createdValue = true;
-                    newValue = factory.value(param1, param2, key);
-                    if (newValue == null)
-                    {
-                        return null; // null value means no mapping is required
-                    }
-                    key = keyTransformer.value(key, newValue);
+                    return null; // null value means no mapping is required
                 }
-                Entry<K, V> newEntry = new Entry<>(key, newValue, (Entry<K, V>) o);
-                if (currentArray.compareAndSet(index, o, newEntry))
-                {
-                    this.incrementSizeAndPossiblyResize(currentArray, length, o);
-                    return null;
-                }
+                key = keyTransformer.value(key, newValue);
+            }
+            Entry<K, V> newEntry = new Entry<>(key, newValue, (Entry<K, V>) o);
+            if (currentArray.compareAndSet(index, o, newEntry))
+            {
+                this.incrementSizeAndPossiblyResize(currentArray, length, o);
+                return null;
             }
         }
     }
