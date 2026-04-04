@@ -18,13 +18,12 @@ jobs:
 
     steps:
       - name: Git Checkout
-        uses: actions/checkout@v2
-      - name: 'Set up JDK'
-        uses: actions/setup-java@v3
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
+          distribution: 'zulu'
           java-version: ${{ matrix.java-version }}
-          distribution: 'temurin'
-          allow-early-access: true
       - name: Set Maven Wrapper
         run: mvn -N io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
       - name: 'JDK Version'
