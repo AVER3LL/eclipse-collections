@@ -1815,6 +1815,9 @@ public class UnifiedSet<T>
         private Object two;
         private Object three;
 
+        final int CHAIN_MAX_INDEX = 3;
+        final int CHAIN_MAX_CAPAITY = 4;
+
         private ChainedBucket()
         {
         }
@@ -1827,9 +1830,9 @@ public class UnifiedSet<T>
 
         public void remove(int i)
         {
-            if (i > 3)
+            if (i > CHAIN_MAX_INDEX)
             {
-                this.removeLongChain(this, i - 3);
+                this.removeLongChain(this, i - CHAIN_MAX_INDEX);
             }
             else
             {
@@ -1886,7 +1889,7 @@ public class UnifiedSet<T>
                     default:
                         if (bucket.three instanceof ChainedBucket)
                         {
-                            i -= 3;
+                            i -= CHAIN_MAX_INDEX;
                             oldBucket = bucket;
                             continue;
                         }
@@ -1902,7 +1905,7 @@ public class UnifiedSet<T>
             while (i > 3 && bucket.three instanceof ChainedBucket)
             {
                 bucket = (ChainedBucket) bucket.three;
-                i -= 3;
+                i -= CHAIN_MAX_INDEX;
             }
             do
             {
@@ -1917,12 +1920,12 @@ public class UnifiedSet<T>
                     case 3:
                         if (bucket.three instanceof ChainedBucket)
                         {
-                            i -= 3;
+                            i -= CHAIN_MAX_INDEX;
                             bucket = (ChainedBucket) bucket.three;
                             continue;
                         }
                         return bucket.three;
-                    case 4:
+                    case CHAIN_MAX_CAPAITY:
                         return null; // this happens when a bucket is exactly full and we're iterating
                     default:
                         throw new AssertionError();
@@ -1941,7 +1944,7 @@ public class UnifiedSet<T>
             {
                 Object result = this.three;
                 this.three = null;
-                return cur == 3 ? null : result;
+                return cur == CHAIN_MAX_INDEX ? null : result;
             }
             if (this.two != null)
             {

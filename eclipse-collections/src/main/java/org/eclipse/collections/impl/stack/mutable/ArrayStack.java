@@ -196,7 +196,7 @@ public class ArrayStack<T> implements MutableStack<T>, Externalizable
     {
         this.checkNegativeCount(count);
         MutableList<T> result = FastList.newList(count);
-        if (this.checkZeroCount(count))
+        if (this.isZeroCount(count))
         {
             return result;
         }
@@ -214,7 +214,7 @@ public class ArrayStack<T> implements MutableStack<T>, Externalizable
     public <R extends Collection<T>> R pop(int count, R targetCollection)
     {
         this.checkNegativeCount(count);
-        if (this.checkZeroCount(count))
+        if (this.isZeroCount(count))
         {
             return targetCollection;
         }
@@ -232,7 +232,7 @@ public class ArrayStack<T> implements MutableStack<T>, Externalizable
     public <R extends MutableStack<T>> R pop(int count, R targetStack)
     {
         this.checkNegativeCount(count);
-        if (this.checkZeroCount(count))
+        if (this.isZeroCount(count))
         {
             return targetStack;
         }
@@ -252,7 +252,7 @@ public class ArrayStack<T> implements MutableStack<T>, Externalizable
         this.delegate.clear();
     }
 
-    private boolean checkZeroCount(int count)
+    private boolean isZeroCount(int count)
     {
         return count == 0;
     }
@@ -268,7 +268,7 @@ public class ArrayStack<T> implements MutableStack<T>, Externalizable
     public ListIterable<T> peek(int count)
     {
         this.checkNegativeCount(count);
-        if (this.checkZeroCount(count))
+        if (this.isZeroCount(count))
         {
             return FastList.newList();
         }

@@ -204,33 +204,21 @@ public final class Interval
     }
 
     /**
+     * Returns an Interval
+     */
+    private static Interval filteredFromTo(int from, int to, int targetRemainder)
+    {
+        if (Math.abs(from % 2) != targetRemainder) { from += from < to ? 1 : -1; }
+        if (Math.abs(to % 2) != targetRemainder)   { to   += to > from ? -1 : 1; }
+        return Interval.fromToBy(from, to, to > from ? 2 : -2);
+    }
+
+    /**
      * Returns an Interval representing the even values from the value from to the value to.
      */
     public static Interval evensFromTo(int from, int to)
     {
-        if (from % 2 != 0)
-        {
-            if (from < to)
-            {
-                from++;
-            }
-            else
-            {
-                from--;
-            }
-        }
-        if (to % 2 != 0)
-        {
-            if (to > from)
-            {
-                to--;
-            }
-            else
-            {
-                to++;
-            }
-        }
-        return Interval.fromToBy(from, to, to > from ? 2 : -2);
+        return Interval.filteredFromTo(from, to, 0);
     }
 
     /**
@@ -238,29 +226,7 @@ public final class Interval
      */
     public static Interval oddsFromTo(int from, int to)
     {
-        if (from % 2 == 0)
-        {
-            if (from < to)
-            {
-                from++;
-            }
-            else
-            {
-                from--;
-            }
-        }
-        if (to % 2 == 0)
-        {
-            if (to > from)
-            {
-                to--;
-            }
-            else
-            {
-                to++;
-            }
-        }
-        return Interval.fromToBy(from, to, to > from ? 2 : -2);
+        return Interval.filteredFromTo(from, to, 1);
     }
 
     /**
