@@ -1054,17 +1054,11 @@ public class ObjectBooleanHashMapWithHashingStrategy<K> implements MutableObject
     {
         if (key == null)
         {
-            if (other == null)
-            {
-                return true;
-            }
+            return other == null;
         }
         else if (key != NULL_KEY && other != null)
         {
-            if (this.hashingStrategy.equals(key, this.toNonSentinel(other)))
-            {
-                return true;
-            }
+            return this.hashingStrategy.equals(key, this.toNonSentinel(other));
         }
         return false;
     }

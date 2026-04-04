@@ -722,11 +722,7 @@ public class CodePointAdapter
             }
             i += Character.charCount(codePoint);
         }
-        if (size < list.size())
-        {
-            return false;
-        }
-        return true;
+        return size >= list.size();
     }
 
     private boolean equalsCodePointAdapter(CodePointAdapter adapter)

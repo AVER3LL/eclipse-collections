@@ -116,16 +116,10 @@ abstract class AbstractMutableBiMap<K, V> extends AbstractBiMap<K, V> implements
     {
         if (value == null)
         {
-            if (other == null)
-            {
-                return true;
-            }
+            return other == null;
         }
-        else if (other == value || value.equals(other))
-        {
-            return true;
-        }
-        return false;
+        else
+            return other == value || value.equals(other);
     }
 
     @Override

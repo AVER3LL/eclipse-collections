@@ -1114,7 +1114,7 @@ public class UnifiedMapWithHashingStrategy<K, V> extends AbstractMutableMap<K, V
             {
                 this.chainedForEachValue((Object[]) value, procedure);
             }
-            else if (value == null && this.table[i - 1] != null || value != null)
+            else if (value != null || this.table[i - 1] != null)
             {
                 procedure.value((V) value);
             }
@@ -2149,16 +2149,10 @@ public class UnifiedMapWithHashingStrategy<K, V> extends AbstractMutableMap<K, V
     {
         if (value == null)
         {
-            if (other == null)
-            {
-                return true;
-            }
+            return other == null;
         }
-        else if (other == value || value.equals(other))
-        {
-            return true;
-        }
-        return false;
+        else
+            return other == value || value.equals(other);
     }
 
     protected class EntrySet implements Set<Entry<K, V>>, Serializable, BatchIterable<Entry<K, V>>
