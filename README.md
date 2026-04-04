@@ -39,9 +39,50 @@ Eclipse Collections is compatible with Java 8+. Eclipse Collections is a part of
     * Optimized Eager, [`Lazy`][LazyIterable] and [`Parallel`][ParallelIterable] APIs
     * [Primitive][PrimitiveIterable] Collections for all primitive types 
 
+## Quick Examples
+
+Suppose we have a class with the following minimal definition
+```java
+public class Person
+{
+    private final String firstName, lastName;
+
+    public Person(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public boolean lastNameEquals(String name)
+    {
+        return name.equals(this.lastName);
+    }
+}
+```
+
+```java
+// Create a mutable list
+MutableList<Person> people = Lists.mutable.with(
+    new Person("Sally", "Smith"),
+    new Person("Ted", "Watson"),
+    new Person("Mary", "Williams"));
+
+// Collect: equivalent of a map
+MutableList<String> lastNames = people.collect(Person::getLastName);
+Assert.assertEquals("Smith, Watson, Williams", lastNames.makeString());
+
+// Select: equivalent of a filter function (we keep the elements matching a predicate)
+MutableList<Person> smiths = people.select(person -> person.lastNameEquals("Smith"));
+Assert.assertEquals("Smith", smiths.collect(Person::getLastName).makeString());
+
+// Reject: filter elements not matching a predicate
+MutableList<Person> notSmiths = people.reject(person -> person.lastNameEquals("Smith"));
+Assert.assertEquals("Watson, Williams", notSmiths.collect(Person::getLastName).makeString());
+```
+
+For more examples, see [Some Quick Code Examples](./README_EXAMPLES.md).
+
 ## Learn Eclipse Collections
 
-* [Some Quick Code Examples](./README_EXAMPLES.md)
 * [Eclipse Collections Katas](https://github.com/eclipse/eclipse-collections-kata), a fun way to help you learn idiomatic Eclipse Collections usage.
     * Start Here - [Pet Kata](http://eclipse.github.io/eclipse-collections-kata/pet-kata/#/) 
     * Continue Here - [Company Kata](http://eclipse.github.io/eclipse-collections-kata/company-kata/#/)
@@ -139,3 +180,6 @@ We welcome contributions! We accept contributions via pull requests here in GitH
 [Adapters]: https://www.eclipse.org/collections/javadoc/10.2.0/org/eclipse/collections/impl/collection/mutable/AbstractCollectionAdapter.html
 
 [Factories]: https://www.eclipse.org/collections/javadoc/10.2.0/org/eclipse/collections/impl/factory/package-summary.html
+
+[MutableList]: https://www.eclipse.org/collections/javadoc/10.2.0/org/eclipse/collections/api/list/MutableList.html
+[Lists]: https://www.eclipse.org/collections/javadoc/10.2.0/org/eclipse/collections/api/factory/Lists.html
